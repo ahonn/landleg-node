@@ -1,0 +1,17 @@
+{
+  "name": "land-leg-node",
+  "version": "1.0.0",
+  "description": "landleg node version",
+  "main": "main.js",
+  "scripts": {
+    "login": "node login.js",
+    "logout": "node logout.js"
+  },
+  "author": "ahonn",
+  "license": "ISC",
+  "dependencies": {
+    "js-yaml": "^3.6.1",
+    "md5": "^2.2.1",
+    "superagent": "^2.3.0"
+  }
+}
