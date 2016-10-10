@@ -12,6 +12,7 @@
   "dependencies": {
     "js-yaml": "^3.6.1",
     "md5": "^2.2.1",
+    "readline-sync": "^1.4.4",
     "superagent": "^2.3.0"
   }
 }
