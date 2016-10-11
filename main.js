@@ -11,8 +11,8 @@ var program = require('commander');
 program
   .version('1.0.0')
   .usage(['[options]'])
-  .option('-i, --login', 'tianyi user login')
-  .option('-o, --logout', 'tianyi user logout')
+  .option('-i, --login [username@password]', '登录用户账号')
+  .option('-o, --logout', '注销账号登录')
   .parse(process.argv);
 
 var LOGIN_URL = 'http://enet.10000.gd.cn:10001/client/login';
@@ -30,9 +30,20 @@ var config = {
   nasip: '219.128.230.1'
 }
 if (!fs.existsSync('./config.yml') || program.login) {
-  config.username = readlineSync.question('username: ');
-  config.password = readlineSync.question('password: ');
-
+  try {
+    if (program.login === true) {
+      config.username = readlineSync.question('username: ');
+      config.password = readlineSync.question('password: ');
+    } else {
+      config.username = program.login.split('@')[0];
+      config.password = program.login.split('@')[1];
+    }
+    
+  } catch (err) {
+    console.log(err);
+    console.log('请使用 landleg --login [username@password]');
+  }
+  
   if (program.login) {
     fs.unlinkSync('./config.yml');
   }
@@ -138,7 +149,8 @@ if (!program.logout) {
         console.log(`${(new Date()).toLocaleString()} ${res.resinfo}`);
         if (res.rescode === '1') {
           login(function () {
-            console.log(`${(new Date()).toLocaleString()} Login ...`);
+            console.log(`${(new Date()).toLocaleString()} 登录中 ...`);
+            setTimeout(keepLoginActive, 1000);
           })
         }
         setTimeout(keepLoginActive, 120000);
@@ -151,11 +163,17 @@ if (!program.logout) {
   }
 } else {
   keepActive(function (res) {
+    console.log(`${(new Date()).toLocaleString()} ${res.resinfo}`);
+    var activeStatus = function () {
+      keepActive(function (res) {
+        console.log(`${(new Date()).toLocaleString()} ${res.resinfo}`);
+      })
+    };
     if (res.rescode === '0') {
       logout(function () {
-        console.log(`${(new Date()).toLocaleString()} Logout ...`)
+        console.log(`${(new Date()).toLocaleString()} 注销中 ...`);
+        setTimeout(activeStatus, 1000);
       })
     }
-    console.log(`${(new Date()).toLocaleString()} ${res.resinfo}`);
   })
 }
