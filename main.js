@@ -6,6 +6,14 @@ var md5 = require('md5');
 var yaml = require('js-yaml');
 var readlineSync = require('readline-sync');
 var superagent = require('superagent');
+var program = require('commander');
+
+program
+  .version('1.0.0')
+  .usage(['[options]'])
+  .option('-i, --login', 'tianyi user login')
+  .option('-o, --logout', 'tianyi user logout')
+  .parse(process.argv);
 
 var LOGIN_URL = 'http://enet.10000.gd.cn:10001/client/login';
 var LOGOUT_URL = 'http://enet.10000.gd.cn:10001/client/logout';
@@ -21,9 +29,13 @@ var config = {
   wifi: '4060',
   nasip: '219.128.230.1'
 }
-if (!fs.existsSync('./config.yml')) {
+if (!fs.existsSync('./config.yml') || program.login) {
   config.username = readlineSync.question('username: ');
   config.password = readlineSync.question('password: ');
+
+  if (program.login) {
+    fs.unlinkSync('./config.yml');
+  }
   fs.writeFileSync('./config.yml', yaml.safeDump(config), 'utf8');
 } else {
   config = yaml.safeLoad(fs.readFileSync('./config.yml', 'utf8'));
@@ -45,7 +57,7 @@ function getClient(type) {
   return type === 'ip' ? ip : mac;
 }
 
-function checkActive(callback) {
+function keepActive(callback) {
   var timestamp = (new Date()).getTime();
   var authenticator = md5(client_ip + nasip + client_mac + timestamp + SECRET).toUpperCase();
   
@@ -90,7 +102,9 @@ function login(callback) {
     .post(LOGIN_URL)
     .send(params)
     .end(function (err, res) {
-      callback(res.body);
+      if (res.ok) {
+        callback(res.body);
+      }
     })
 }
 
@@ -110,13 +124,38 @@ function logout(callback) {
     .post(LOGOUT_URL)
     .send(params)
     .end(function (err, res) {
-      callback(res.body);
+      if (res.ok) {
+        callback(res.body);
+      }
     })
 }
 
-logout(function (result) {
-  console.log(result);
-  checkActive(function (result) {
-    console.log(result);
+
+if (!program.logout) {
+  try {
+    var keepLoginActive = function () {
+      keepActive(function (res) {
+        console.log(`${(new Date()).toLocaleString()} ${res.resinfo}`);
+        if (res.rescode === '1') {
+          login(function () {
+            console.log(`${(new Date()).toLocaleString()} Login ...`);
+          })
+        }
+        setTimeout(keepLoginActive, 60000);
+      })
+    };
+    keepLoginActive();
+  } catch (err) {
+    logger.error(err);
+    keepLoginActive();
+  }
+} else {
+  keepActive(function (res) {
+    if (res.rescode === '0') {
+      logout(function () {
+        console.log(`${(new Date()).toLocaleString()} Logout ...`)
+      })
+    }
+    console.log(`${(new Date()).toLocaleString()} ${res.resinfo}`);
   })
-})
+}
