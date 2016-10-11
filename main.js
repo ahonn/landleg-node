@@ -44,10 +44,10 @@ if (!fs.existsSync('./config.yml') || program.login) {
     console.log('请使用 landleg --login [username@password]');
   }
   
-  if (fs.existsSync('./config.yml')) {
-    fs.unlinkSync('./config.yml');
+  if (fs.existsSync('./landleg.yml')) {
+    fs.unlinkSync('./landleg.yml');
   }
-  fs.writeFileSync('./config.yml', yaml.safeDump(config), 'utf8');
+  fs.writeFileSync('./landleg.yml', yaml.safeDump(config), 'utf8');
 } else {
   config = yaml.safeLoad(fs.readFileSync('./config.yml', 'utf8'));
 }
