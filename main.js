@@ -141,7 +141,7 @@ if (!program.logout) {
             console.log(`${(new Date()).toLocaleString()} Login ...`);
           })
         }
-        setTimeout(keepLoginActive, 60000);
+        setTimeout(keepLoginActive, 120000);
       })
     };
     keepLoginActive();
