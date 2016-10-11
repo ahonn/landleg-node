@@ -20,9 +20,6 @@ var LOGOUT_URL = 'http://enet.10000.gd.cn:10001/client/logout';
 var ACTIVE_URL = 'http://enet.10000.gd.cn:8001/hbservice/client/active?';
 var SECRET = 'Eshore!@#';
 
-var client_ip = getClient('ip');
-var client_mac = getClient('mac');
-
 var config = {
   username: '',
   password: '',
@@ -53,6 +50,17 @@ if (!fs.existsSync('./landleg.yml') || program.login) {
 }
 var wifi = config.wifi;
 var nasip = config.nasip;
+var client_ip = getClient('ip');
+var client_mac = getClient('mac');
+
+console.log('==========================');
+console.log('地腿 For Node.js By Ahonn')
+console.log('==========================');
+console.log('username: ' + config.username);
+console.log('IP: ' + client_ip);
+console.log('MAC: ' + client_mac);
+console.log('==========================');
+
 
 function getClient(type) {
   var ip, mac;
