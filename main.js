@@ -20,6 +20,16 @@ var LOGOUT_URL = 'http://enet.10000.gd.cn:10001/client/logout';
 var ACTIVE_URL = 'http://enet.10000.gd.cn:8001/hbservice/client/active?';
 var SECRET = 'Eshore!@#';
 
+var client_ip = getClient('ip');
+var client_mac = getClient('mac');
+
+console.log('=============================');
+console.log('地腿 For Node.js By Ahonn')
+console.log('=============================');
+console.log('IP: ' + client_ip);
+console.log('MAC: ' + client_mac);
+console.log('=============================');
+
 var config = {
   username: '',
   password: '',
@@ -28,39 +38,24 @@ var config = {
 }
 if (!fs.existsSync('./landleg.yml') || program.login) {
   try {
-    if (program.login === true) {
+    if (program.login === true || program.login === undefined) {
       config.username = readlineSync.question('username: ');
       config.password = readlineSync.question('password: ');
     } else {
       config.username = program.login.split('@')[0];
       config.password = program.login.split('@')[1];
     }
-    
+   
+    fs.writeFileSync('./landleg.yml', yaml.safeDump(config), 'utf8'); 
   } catch (err) {
     console.log(err);
     console.log('请使用 landleg --login [username@password]');
   }
-  
-  if (fs.existsSync('./landleg.yml')) {
-    fs.unlinkSync('./landleg.yml');
-  }
-  fs.writeFileSync('./landleg.yml', yaml.safeDump(config), 'utf8');
 } else {
   config = yaml.safeLoad(fs.readFileSync('./landleg.yml', 'utf8'));
 }
 var wifi = config.wifi;
 var nasip = config.nasip;
-var client_ip = getClient('ip');
-var client_mac = getClient('mac');
-
-console.log('==========================');
-console.log('地腿 For Node.js By Ahonn')
-console.log('==========================');
-console.log('username: ' + config.username);
-console.log('IP: ' + client_ip);
-console.log('MAC: ' + client_mac);
-console.log('==========================');
-
 
 function getClient(type) {
   var ip, mac;
@@ -166,7 +161,7 @@ if (!program.logout) {
     };
     keepLoginActive();
   } catch (err) {
-    logger.error(err);
+    console.error(err);
     keepLoginActive();
   }
 } else {
