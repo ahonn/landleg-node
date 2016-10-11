@@ -29,7 +29,7 @@ var config = {
   wifi: '4060',
   nasip: '219.128.230.1'
 }
-if (!fs.existsSync('./config.yml') || program.login) {
+if (!fs.existsSync('./landleg.yml') || program.login) {
   try {
     if (program.login === true) {
       config.username = readlineSync.question('username: ');
@@ -49,7 +49,7 @@ if (!fs.existsSync('./config.yml') || program.login) {
   }
   fs.writeFileSync('./landleg.yml', yaml.safeDump(config), 'utf8');
 } else {
-  config = yaml.safeLoad(fs.readFileSync('./config.yml', 'utf8'));
+  config = yaml.safeLoad(fs.readFileSync('./landleg.yml', 'utf8'));
 }
 var wifi = config.wifi;
 var nasip = config.nasip;
