@@ -7,6 +7,7 @@ var yaml = require('js-yaml');
 var readlineSync = require('readline-sync');
 var superagent = require('superagent');
 var program = require('commander');
+var userHome = require('user-home');
 
 program
   .version('1.0.0')
@@ -36,7 +37,7 @@ var config = {
   wifi: '4060',
   nasip: '219.128.230.1'
 }
-if (!fs.existsSync('~/landleg.yml') || program.login) {
+if (!fs.existsSync(`${userHome}/landleg.yml`) || program.login) {
   try {
     if (program.login === true || program.login === undefined) {
       config.username = readlineSync.question('username: ');
@@ -45,14 +46,14 @@ if (!fs.existsSync('~/landleg.yml') || program.login) {
       config.username = program.login.split('@')[0];
       config.password = program.login.split('@')[1];
     }
-   
-    fs.writeFileSync('~/landleg.yml', yaml.safeDump(config), 'utf8'); 
   } catch (err) {
     console.log(err);
     console.log('请使用 landleg --login [username@password]');
   }
+
+  fs.writeFileSync(`${userHome}/landleg.yml`, yaml.safeDump(config), 'utf8'); 
 } else {
-  config = yaml.safeLoad(fs.readFileSync('~/landleg.yml', 'utf8'));
+  config = yaml.safeLoad(fs.readFileSync(`${userHome}/landleg.yml`, 'utf8'));
 }
 var wifi = config.wifi;
 var nasip = config.nasip;
