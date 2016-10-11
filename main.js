@@ -36,7 +36,7 @@ var config = {
   wifi: '4060',
   nasip: '219.128.230.1'
 }
-if (!fs.existsSync('./landleg.yml') || program.login) {
+if (!fs.existsSync('~/landleg.yml') || program.login) {
   try {
     if (program.login === true || program.login === undefined) {
       config.username = readlineSync.question('username: ');
@@ -46,13 +46,13 @@ if (!fs.existsSync('./landleg.yml') || program.login) {
       config.password = program.login.split('@')[1];
     }
    
-    fs.writeFileSync('./landleg.yml', yaml.safeDump(config), 'utf8'); 
+    fs.writeFileSync('~/landleg.yml', yaml.safeDump(config), 'utf8'); 
   } catch (err) {
     console.log(err);
     console.log('请使用 landleg --login [username@password]');
   }
 } else {
-  config = yaml.safeLoad(fs.readFileSync('./landleg.yml', 'utf8'));
+  config = yaml.safeLoad(fs.readFileSync('~/landleg.yml', 'utf8'));
 }
 var wifi = config.wifi;
 var nasip = config.nasip;
