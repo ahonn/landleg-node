@@ -44,7 +44,7 @@ if (!fs.existsSync('./config.yml') || program.login) {
     console.log('请使用 landleg --login [username@password]');
   }
   
-  if (program.login) {
+  if (fs.existsSync('./config.yml')) {
     fs.unlinkSync('./config.yml');
   }
   fs.writeFileSync('./config.yml', yaml.safeDump(config), 'utf8');
